@@ -1,4 +1,4 @@
-# Natural Language SQL Query Generator
+# Amazon Review Chatbot
 
 - This application allows users to chat with amazon reviews data using natural language.
 - It uses web scraping to get the data from amazon reviews and natural language processing to understand the user's question.
@@ -23,6 +23,7 @@
   - FastAPI for handling database connections and text-to-SQL conversion
   - Flask server for web scraping
   - OpenAI for text-to-SQL conversion
+  - Supabase for database connection and data storage
   
 
 - Key Components:
