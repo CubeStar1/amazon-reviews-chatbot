@@ -1,46 +1,71 @@
 'use client'
 
-import { useState } from 'react'
-import { useChat } from 'ai/react'
+import { useRef, useEffect } from 'react'
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import MessageList from './MessageList'
 import { Input } from "@/components/ui/input"
-import { ScrollArea } from "@/components/ui/scroll-area"
+import { ChevronRight } from 'lucide-react'
 
 interface ChatInterfaceProps {
-  dbCredentials: {
-    db_user: string;
-    db_password: string;
-    db_host: string;
-    db_port: string;
-    db_name: string;
-  };
+  isSidebarOpen: boolean;
+  setIsSidebarOpen: (open: boolean) => void;
+  messages: any[];
+  handleSubmit: (e: React.FormEvent) => void;
+  input: string;
+  setInput: (input: string) => void;
+  isConnected: boolean;
+  isLoading: boolean;
 }
 
-export function ChatInterface({ dbCredentials }: ChatInterfaceProps) {
-  const { messages, input, handleInputChange, handleSubmit } = useChat({
-    api: '/api/chat',
-    body: { dbCredentials },
-  })
+export default function ChatInterface({
+  isSidebarOpen,
+  setIsSidebarOpen,
+  messages,
+  handleSubmit,
+  input,
+  setInput,
+  isConnected,
+  isLoading
+}: ChatInterfaceProps) {
+  const messagesEndRef = useRef<HTMLDivElement>(null)
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
+  }
+
+  useEffect(scrollToBottom, [messages]);
 
   return (
-    <div className="flex flex-col h-[600px]">
-      <ScrollArea className="flex-grow p-4 border rounded-md mb-4 ">
-        {messages.map(m => (
-          <div key={m.id} className={`mb-4 ${m.role === 'user' ? 'text-blue-600' : 'text-green-600'}`}>
-            <strong>{m.role === 'user' ? 'You: ' : 'AI: '}</strong>
-            {m.content}
+    <div className="flex-grow overflow-hidden">
+      <Card className="h-full flex flex-col">
+        <CardHeader className="flex flex-row items-center justify-between">
+          <CardTitle></CardTitle>
+          {!isSidebarOpen && (
+            <Button variant="ghost" size="icon" onClick={() => setIsSidebarOpen(true)}>
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+          )}
+        </CardHeader>
+        <CardContent className="flex-grow overflow-hidden">
+          <div className="flex flex-col h-full">
+            <MessageList messages={messages} />
+            <div ref={messagesEndRef} />
+            <form onSubmit={handleSubmit} className="flex space-x-2">
+              <Input
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                placeholder="Ask about your data..."
+                className="flex-grow"
+                disabled={!isConnected || isLoading}
+              />
+              <Button type="submit" disabled={!isConnected || isLoading}>
+                {isLoading ? 'Sending...' : 'Send'}
+              </Button>
+            </form>
           </div>
-        ))}
-      </ScrollArea>
-      <form onSubmit={handleSubmit} className="flex space-x-2">
-        <Input
-          value={input}
-          onChange={handleInputChange}
-          placeholder="Ask about your data..."
-          className="flex-grow"
-        />
-        <Button type="submit">Send</Button>
-      </form>
+        </CardContent>
+      </Card>
     </div>
   )
 }
