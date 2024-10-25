@@ -4,7 +4,7 @@
 - It uses web scraping to get the data from amazon reviews and natural language processing to understand the user's question.
 - It connects to a database (or uses a mock database) and provides an interface for users to ask questions in plain English, which are then converted into SQL queries and executed against the database.
 
-![image](https://github.com/CubeStar1/amazon-review-chatbot/blob/main/public/reviewquery-ai-landing-light.jpg)
+![image](https://github.com/CubeStar1/amazon-reviews-chatbot/blob/main/public/reviewquery-ai-landing-light.jpg)
 
 ## Features
 
